@@ -397,8 +397,11 @@ endif
 mocks_generate: bin/mockery ## Generate mockery mocks for tests
 	go generate $$(go list ./... | grep -v \\/pkg\\/gen\\/ | grep -v \\/cmd\\/)
 
+.PHONY: server_test_setup
+server_test_setup: db_test_reset db_test_migrate redis_reset db_test_truncate
+
 .PHONY: server_test
-server_test: db_test_reset db_test_migrate redis_reset server_test_standalone ## Run server unit tests
+server_test: server_test_setup server_test_standalone ## Run server unit tests
 
 .PHONY: server_test_standalone
 server_test_standalone: ## Run server unit tests with no deps
@@ -653,6 +656,11 @@ db_test_run: db_test_start db_test_create ## Run Test DB
 
 .PHONY: db_test_reset
 db_test_reset: db_test_destroy db_test_run ## Reset Test DB (destroy and run)
+
+.PHONY: db_test_truncate
+db_test_truncate:
+	@echo "Truncating ${DB_NAME_TEST} database..."
+	DB_PORT=$(DB_PORT_TEST) DB_NAME=$(DB_NAME_TEST) ./scripts/db-truncate
 
 .PHONY: db_test_migrate_standalone
 db_test_migrate_standalone: bin/milmove ## Migrate Test DB directly
