@@ -103,7 +103,7 @@ func NewPrimeAPIHandler(context handlers.HandlerContext) http.Handler {
 
 	primeAPI.MtoShipmentUpdateMTOAgentHandler = UpdateMTOAgentHandler{
 		context,
-		mtoagent.NewMTOAgentUpdater(context.DB()),
+		mtoagent.NewMTOAgentUpdater(context.DB(), movetaskorder.NewMoveTaskOrderChecker(context.DB())),
 	}
 
 	primeAPI.MtoShipmentUpdateMTOShipmentStatusHandler = UpdateMTOShipmentStatusHandler{
