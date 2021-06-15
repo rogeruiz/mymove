@@ -369,6 +369,16 @@ func (suite *PopTestSuite) NoVerrs(verrs *validate.Errors) bool {
 	return true
 }
 
+// NilOrNoVerrs checks that an error is effecively nil
+func (suite *PopTestSuite) NilOrNoVerrs(err error) {
+	switch verr := err.(type) {
+	case *validate.Errors:
+		suite.False(verr.HasAny(), "non-empty validation errors: %v", verr)
+	default:
+		suite.Nil(err)
+	}
+}
+
 // TearDown runs the teardown for step for the suite
 // Important steps are to close open DB connections and drop the DB
 func (suite *PopTestSuite) TearDown() {
